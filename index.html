@@ -7,7 +7,29 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-  <header>Inventory App</header>
+  <header>
+    <h2>Inventory App</h2>
+  </header>
+  <div class="container text-center">
+    <section id="retailersContainer">
+      <form id="newRetailer">
+        <h3>Add a Retailer</h3>
+        <input type="text" id="name" placeholder="Name"/><br>
+        <button type="submit" id="addRetailer">Submit</button>
+      </form>
+      <ul id="lists" class="list-none">
+      </ul>            
+    </section>
+    <section id="palletsContainer">
+      <form id="newPallet">
+        <h3>Add a Pallet</h3>
+        <input type="text" id="boxes" placeholder="Boxes"/><br>
+        <button type="submit" id="addBoxes">Submit</button>
+      </form>
+      <ul id="boxes" class="list-none">
+      </ul>            
+    </section>
+  </div>
   <script src="js/index.js"></script>    
 </body>
 </html>
