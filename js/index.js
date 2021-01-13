@@ -1,4 +1,4 @@
-class InventoryApp {
+class RetailerList {
   constructor(name){
     this.name = name
   }
