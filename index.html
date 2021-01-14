@@ -10,17 +10,19 @@
   <header>
     <h2>Inventory App</h2>
   </header>
-  <div class="container mx-auto px-6 py-6 pt-24">
+  <div class="retailer-container mx-auto px-6 py-6 pt-24">
     <section id="retailersContainer">
       <form id="newRetailer">
         <h3>Add a Retailer</h3>
         <input type="text" id="name" placeholder="Name"/><br>
         <button type="submit" id="addRetailer">Submit</button>
       </form>
-      <ul id="lists" class="list-none">
+      <ul id="lists" class="py-6 pt-8">
       </ul>            
     </section>
-    <section id="palletsContainer" class="pt-24">
+  </div>  
+  <div class="pallet-container">  
+    <section id="palletsContainer" class="px-6 py-6 pt-8">
       <form id="newPallet">
         <h3>Add a Pallet</h3>
         <input type="text" id="boxes" placeholder="Boxes"/><br>
@@ -30,7 +32,8 @@
       </ul>            
     </section>
   </div>
-  <script src="js/index.js"></script>
-  <script src="js/listeners.js"></script>    
+  <script src="js/retailer.js"></script>
+  <script src="js/pallet.js"></script>
+  <script src="js/index.js"></script>    
 </body>
 </html>
