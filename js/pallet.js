@@ -1,9 +1,9 @@
 class Pallet {
 
-  constructor(data) {
-    this.id = data.id
-    this.boxes = data.boxes
-    this.retailer_id = data.retailer_id
+  constructor(id, boxes, retailer_id) {
+    this.id = id
+    this.boxes = boxes
+    this.retailer_id = retailer_id
     
     Pallet.all.push(this)
   }    

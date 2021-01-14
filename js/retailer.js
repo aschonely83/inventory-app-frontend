@@ -1,10 +1,10 @@
 class Retailer {
     
-    constructor(data){
-      this.id = data.id  
-      this.name = data.name
-      RetailerList.all.push(this)
+    constructor(id, name){
+      this.id = id  
+      this.name = name
+      Retailer.all.push(this)
     }
 }
 
-RetailerList.all = []
+Retailer.all = []
