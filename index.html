@@ -7,33 +7,29 @@
     <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h2>Inventory App</h2>
-  </header>
-  <div class="retailer-container mx-auto px-6 py-6 pt-24">
-    <section id="retailersContainer">
-      <form id="newRetailer">
-        <h3>Add a Retailer</h3>
-        <input type="text" id="name" placeholder="Name"/><br>
-        <button type="submit" id="addRetailer">Submit</button>
+  <div class="container mx-auto sm:grid grid-cols-3 gap-4 my-4">
+    <section id="retailersContainer" class="px-4 bg-gray-300 sm:min-h-screen rounded-md shadow">
+      <h1 class="text-2xl semibold border-b-4 border-gray">Retailers</h1>
+      <form id="newRetailer" class="flex mt-4">       
+        <input type="text" class="flex-1 p-3" placeholder="New Retailer"/>
+        <button type="submit" class="flex-none"><i class="fa fa-plus p-4 z--1 bg-blue-200"></i></button>
       </form>
-      <ul id="lists" class="py-6 pt-8">
+      <ul id="lists" class="list-none">
       </ul>            
     </section>
   </div>  
-  <div class="pallet-container">  
-    <section id="palletsContainer" class="px-6 py-6 pt-8">
-      <form id="newPallet">
-        <h3>Add a Pallet</h3>
-        <input type="text" id="boxes" placeholder="Boxes"/><br>
-        <button type="submit" id="addBoxes">Submit</button>
+    <section id="palletsContainer"  class="px-4 bg-gray-300 sm:min-h-screen col-span-2 rounded-md shadow">
+      <h1 class="text-2xl semibold border-b-4 border-gray">Pallets</h1>
+      <form id="newPallet" class="flex mt-4">
+        <input type="text" class="block flex-1 p-3" placeholder=" New Pallet"/>
+        <button type="submit" class="block flex-none"><i class="fa fa-plus p-4 z--1 bg-blue-200"></i></button>
       </form>
       <ul id="boxes" class="list-none">
       </ul>            
     </section>
-  </div>
-  <script src="js/retailer.js"></script>
-  <script src="js/pallet.js"></script>
-  <script src="js/index.js"></script>    
+  <!--<script src="js/retailer.js"></script>
+  <script src="js/pallet.js"></script>-->
+  <script src="js/index.js"></script>
+  <script src="js/listeners.js"></script>    
 </body>
 </html>
