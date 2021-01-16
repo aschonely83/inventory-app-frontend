@@ -36,3 +36,15 @@ class Retailer {
     return this.element;
   }
 }
+
+class Pallet {
+
+  constructor(attributes) {
+    let whiteList = ["id", "boxes", "retailer_id"]
+    whiteList.forEach(attr => this[attr] = attributes[attr]);
+  }
+
+  static container() {
+    return this.c ||= document.querySelector("#boxes")
+  }
+}
