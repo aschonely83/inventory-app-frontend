@@ -46,8 +46,13 @@ class Retailer {
     this.retailerName ||= document.createElement('p');
     this.retailerName.classList.add(..."py-4 col-span-10 sm:col-span-4".split(" "));
     this.retailerName.textContent = this.name;
+    if(!this.delLink) {
+      this.delLink = document.createElement("a");
+      this.delLink.classList.add(..."deleteRetailer my-4 text-right".split(" "));
+      this.delLink.innerHTML = '<i class="fas fa-trash-alt"></i>'
+    }
 
-    this.element.append(this.retailerName);
+    this.element.append(this.retailerName, this.delLink);
     return this.element;
   }
 }
