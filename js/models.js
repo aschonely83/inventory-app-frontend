@@ -9,19 +9,34 @@ class Retailer {
     return this.c ||= document.querySelector("#retailersContainer")
   }
 
-  static list() {
-    return this.l ||= document.querySelector("#retailers")
-  }
-
   static all() {
     return fetch("http://localhost:3000/retailers")
       .then(res => res.json())
       .then(retailerJson => {
         this.collection = retailerJson.map(rAttributes => new Retailer(rAttributes))
         let listItems = this.collection.map(list => list.render())
-        this.list().append(...listItems)
+        this.container().append(...listItems)
         return this.collection
       })
+  }
+
+  static create(formData) {
+    return fetch("http://localhost:3000/retailers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(formData)  
+    })
+      .then(res => res.json())
+      .then(json => {
+        let retailer = new Retailer(json);
+        this.collection.push(retailer);
+        this.container().appendChild(retailer.render());
+        return retailer;
+      })
+      .catch(err => alert(err));
   }
 
   render() {
