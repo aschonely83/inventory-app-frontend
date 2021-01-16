@@ -14,7 +14,14 @@ class Retailer {
   }
 
   static all() {
-    fetch("http://localhost:3000/retailers")
+    return fetch("http://localhost:3000/retailers")
+      .then(res => res.json())
+      .then(retailerJson => {
+        this.collection = retailerJson.map(rAttributes => new Retailer(rAttributes))
+        let listItems = this.collection.map(list => list.render())
+        this.list().append(...listItems)
+        return this.collection
+      })
   }
 
   render() {
