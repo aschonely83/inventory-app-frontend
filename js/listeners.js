@@ -3,7 +3,8 @@ document.addEventListener('click', function(e) {
 })
 
 document.addEventListener('DOMContentLoaded', function(e) {
-  Retailer.all();    
+  Retailer.all();
+  Pallet.all();    
 })
 
 document.addEventListener('click', function(e) {

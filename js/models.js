@@ -18,8 +18,8 @@ class Retailer {
       .then(res => res.json())
       .then(retailerJson => {
         this.collection = retailerJson.map(rAttributes => new Retailer(rAttributes))
-        let listItems = this.collection.map(list => list.render())
-        this.container().append(...listItems)
+        let retailers = this.collection.map(retailer => retailer.render())
+        this.container().append(...retailers)
         return this.collection
       })
   }
@@ -86,5 +86,53 @@ class Pallet {
 
   static container() {
     return this.c ||= document.querySelector("#boxes")
+  }
+  
+  static all() {
+    return fetch("http://localhost:3000/pallets")
+      .then(res => res.json())
+      .then(palletJson => {
+        this.collection = palletJson.map(pAttributes => new Pallet(pAttributes))
+        let pallets = this.collection.map(pallet => pallet.render())
+        this.container().append(...pallets)
+        return this.collection
+      })
+  }
+
+  static create(formData) {
+    return fetch("http://localhost:3000/pallets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({pallet: formData})  
+    })
+      .then(res => res.json())
+      .then(palletAttributes => {
+        let pallet = new Pallet(palletAttributes);
+        this.collection.push(pallet);
+        this.container().appendChild(pallet.render());
+        return pallet;
+      })
+      .catch(err => alert(err));
+  }
+
+
+  render() {
+    this.element ||= document.createElement('li');
+    this.element.classList.add(..."my-2 px-1 bg-blue-200 grid grid-cols-12".split(" "));
+
+    this.palletBoxes ||= document.createElement('p');
+    this.palletBoxes.classList.add(..."py-4 col-span-9".split(" "));
+    this.palletBoxes.textContent = this.boxes;
+    if(!this.edtLink) {
+      this.edtLink = document.createElement("a");
+      this.edtLink.classList.add(..."my-1".split(" "));
+      this.edtLink.innerHTML = `<i class="fas fa-edit editPallet p-4 cursor-pointer" data-retailer-id=${this.id}></i>`;
+    }
+
+    this.element.append(this.palletBoxes, this.edtLink);
+    return this.element;
   }
 }
