@@ -6,6 +6,14 @@ document.addEventListener('DOMContentLoaded', function(e) {
   Retailer.all();    
 })
 
+document.addEventListener('click', function(e) {
+  let target = e.target;
+  if(target.matches('.deleteRetailer')) {
+    let retailer = Retailer.findById(target.dataset.retailerId);
+    retailer.delete();
+  }
+})
+
 document.addEventListener('submit', function(e) {
   let target = e.target;
   if(target.matches("#newRetailer")) {

@@ -6,7 +6,11 @@ class Retailer {
   }
 
   static container() {
-    return this.c ||= document.querySelector("#retailersContainer")
+    return this.c ||= document.querySelector("#retailers")
+  }
+
+  static findById(id) {
+    return this.collection.find(retailer => retailer.id == id)
   }
 
   static all() {
@@ -39,6 +43,22 @@ class Retailer {
       .catch(err => alert(err));
   }
 
+  delete() {
+    return fetch(`http://localhost:3000/retailers/${this.id}`, {
+      method: 'DELETE',
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(json => {
+      let index = Retailer.collection.findIndex(retailer => retailer.id == json.id);
+      Retailer.collection.splice(index, 1);
+      this.element.remove();
+    })
+  }
+
   render() {
     this.element ||= document.createElement('li');
 
@@ -48,8 +68,8 @@ class Retailer {
     this.retailerName.textContent = this.name;
     if(!this.delLink) {
       this.delLink = document.createElement("a");
-      this.delLink.classList.add(..."deleteRetailer my-4 text-right".split(" "));
-      this.delLink.innerHTML = '<i class="fas fa-trash-alt"></i>'
+      this.delLink.classList.add(..."my-1".split(" "));
+      this.delLink.innerHTML = `<i class="fas fa-trash-alt deleteRetailer p-4 cursor-pointer" data-retailer-id=${this.id}></i>`;
     }
 
     this.element.append(this.retailerName, this.delLink);
