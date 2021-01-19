@@ -1,8 +1,10 @@
 class Retailer {
   
   constructor(attributes) {
-    let whiteList = ["id", "name"]
+    let whiteList = ["id", "name", "active"]
     whiteList.forEach(attr => this[attr] = attributes[attr])
+
+    if(this.active) { Retailer.active = this;}
   }
 
   static container() {
@@ -11,6 +13,20 @@ class Retailer {
 
   static findById(id) {
     return this.collection.find(retailer => retailer.id == id)
+  }
+
+  show() {
+    return fetch(`http://localhost:3000/retailers/${this.id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
+     .then(resp => resp.json())
+     .then(({retailer, pallets}) => {
+       Pallet.loadFromLoadRetailer(pallets, retailer.id)
+       this.toggleActive();
+     })
   }
 
   static all() {
@@ -31,11 +47,11 @@ class Retailer {
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
-      body: JSON.stringify(formData)  
+      body: JSON.stringify({retailer: formData})  
     })
       .then(res => res.json())
-      .then(json => {
-        let retailer = new Retailer(json);
+      .then(retailerAttributes => {
+        let retailer = new Retailer(retailerAttributes);
         this.collection.push(retailer);
         this.container().appendChild(retailer.render());
         return retailer;
@@ -57,6 +73,16 @@ class Retailer {
       Retailer.collection.splice(index, 1);
       this.element.remove();
     })
+  }
+
+  toggleActive() {
+    if(Retailer.active) {
+      Retailer.active.element.classList.replace("bg-blue-400", "bg-blue-200");
+      Retailer.active.active = false;
+    }
+
+    this.element.classList.replace("bg-blue-200", "bg-blue-400");
+    Retailer.active = this;
   }
 
   render() {
