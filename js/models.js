@@ -3,30 +3,10 @@ class Retailer {
   constructor(attributes) {
     let whiteList = ["id", "name", "active"]
     whiteList.forEach(attr => this[attr] = attributes[attr])
-
-    if(this.active) { Retailer.active = this;}
   }
 
   static container() {
     return this.c ||= document.querySelector("#retailers")
-  }
-
-  static findById(id) {
-    return this.collection.find(retailer => retailer.id == id)
-  }
-
-  show() {
-    return fetch(`http://localhost:3000/retailers/${this.id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      }
-    })
-     .then(resp => resp.json())
-     .then(({retailer, pallets}) => {
-       Pallet.loadFromLoadRetailer(pallets, retailer.id)
-       this.toggleActive();
-     })
   }
 
   static all() {
@@ -40,14 +20,18 @@ class Retailer {
       })
   }
 
+  static findById(id) {
+    return this.collection.find(retailer => retailer.id == id)
+  }
+  
   static create(formData) {
     return fetch("http://localhost:3000/retailers", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({retailer: formData})  
+      body: JSON.stringify(formData)  
     })
       .then(res => res.json())
       .then(retailerAttributes => {
@@ -59,6 +43,30 @@ class Retailer {
       .catch(err => alert(err));
   }
 
+  show() {
+    return fetch(`http://localhost:3000/retailers/${this.id}`, {
+      method: 'GET',
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      }
+    })
+     .then(resp => resp.json())
+     .then(({id, palletsAttributes}) => {
+       Pallet.loadFromRetailer(id, palletsAttributes);
+       this.markActive();
+     })
+  }
+
+  markActive() {
+    if(Retailer.active) {
+      Retailer.active.element.classList.replace("bg-blue-400", "bg-blue-200");
+      Retailer.active.active = false;
+    }
+    this.element.classList.replace("bg-blue-200", "bg-blue-400");
+    Retailer.active = this;
+  }
+
   delete() {
     return fetch(`http://localhost:3000/retailers/${this.id}`, {
       method: 'DELETE',
@@ -68,29 +76,24 @@ class Retailer {
       }
     })
     .then(res => res.json())
-    .then(json => {
-      let index = Retailer.collection.findIndex(retailer => retailer.id == json.id);
+    .then(({id}) => {
+      let index = Retailer.collection.findIndex(pallet => pallet.id == id)
       Retailer.collection.splice(index, 1);
       this.element.remove();
+      if(id == Pallet.active_retailer_id) {
+        Pallet.container().innerHTML = `<li class="my-2 p-4">Select a Retailer to see pallets</li>`
+        return this;
+      }
     })
-  }
-
-  toggleActive() {
-    if(Retailer.active) {
-      Retailer.active.element.classList.replace("bg-blue-400", "bg-blue-200");
-      Retailer.active.active = false;
-    }
-
-    this.element.classList.replace("bg-blue-200", "bg-blue-400");
-    Retailer.active = this;
   }
 
   render() {
     this.element ||= document.createElement('li');
-
     this.element.classList.add(..."my-2 px-4 bg-blue-200 grid grid-cols-12 sm:grid-cols-6".split(" "));
-    this.retailerName ||= document.createElement('p');
-    this.retailerName.classList.add(..."py-4 col-span-10 sm:col-span-4".split(" "));
+
+    this.retailerName ||= document.createElement("a");
+    this.retailerName.classList.add(..."py-4 col-span-10 sm:col-span-4 selectRetailer".split(" "));
+    this.retailerName.dataset.retailerId = this.id
     this.retailerName.textContent = this.name;
     if(!this.delLink) {
       this.delLink = document.createElement("a");
@@ -114,51 +117,52 @@ class Pallet {
     return this.c ||= document.querySelector("#boxes")
   }
   
-  static all() {
-    return fetch("http://localhost:3000/pallets")
-      .then(res => res.json())
-      .then(palletJson => {
-        this.collection = palletJson.map(pAttributes => new Pallet(pAttributes))
-        let pallets = this.collection.map(pallet => pallet.render())
-        this.container().append(...pallets)
-        return this.collection
-      })
+  static collection() {
+    return this.coll ||= {};
   }
-
+  
+  static loadFromRetailer(id, palletsAttributes ) {
+    Pallet.active_retailer_id = id;
+    let pallets = palletsAttributes.map(palletAttributes => new Pallet(palletAttributes));
+    this.collection()[id] = pallets;
+    let rendered = pallets.map(pallet => pallet.render())
+    this.container().innerHTML = "";
+    this.container().append(...rendered)
+  }
+  
   static create(formData) {
+    if(!Pallet.active_retailer_id) {
+    }else {
+     formData.retailer_id = Pallet.active_retailer_id;
+    }
     return fetch("http://localhost:3000/pallets", {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({pallet: formData})  
-    })
-      .then(res => res.json())
-      .then(palletAttributes => {
-        let pallet = new Pallet(palletAttributes);
-        this.collection.push(pallet);
-        this.container().appendChild(pallet.render());
-        return pallet;
+      body: JSON.stringify({
+        pallet: formData
       })
-      .catch(err => alert(err));
+    })
+     .then(res => res.json())
+     .then(palletData => {
+       let pallet = new Pallet(palletData);
+       this.collection()[Pallet.active_retailer_id].push(pallet);
+       this.container().append(pallet.render())
+       return pallet;
+     })
   }
-
 
   render() {
     this.element ||= document.createElement('li');
     this.element.classList.add(..."my-2 px-1 bg-blue-200 grid grid-cols-12".split(" "));
 
-    this.palletBoxes ||= document.createElement('p');
+    this.palletBoxes ||= document.createElement('a');
     this.palletBoxes.classList.add(..."py-4 col-span-9".split(" "));
     this.palletBoxes.textContent = this.boxes;
-    if(!this.edtLink) {
-      this.edtLink = document.createElement("a");
-      this.edtLink.classList.add(..."my-1".split(" "));
-      this.edtLink.innerHTML = `<i class="fas fa-edit editPallet p-4 cursor-pointer" data-retailer-id=${this.id}></i>`;
-    }
-
-    this.element.append(this.palletBoxes, this.edtLink);
+   
+    this.element.append(this.palletBoxes);
     return this.element;
   }
 }
