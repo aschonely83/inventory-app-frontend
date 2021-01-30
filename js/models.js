@@ -15,7 +15,7 @@ class Retailer {
       .then(retailerJson => {
         this.collection = retailerJson.map(rAttributes => new Retailer(rAttributes))
         let retailers = this.collection.map(retailer => retailer.render())
-        this.container().append(...retailers)
+         this.container().append(...retailers)
         return this.collection
       })
   }
@@ -23,6 +23,15 @@ class Retailer {
   static findById(id) {
     return this.collection.find(retailer => retailer.id == id)
   }
+
+  static filterBy(query) {
+    query = query.toLowerCase()
+    let filterArray = this.collection.filter(retailer => {
+      return retailer.name.toLowerCase() === query
+    })
+    
+    filterArray.forEach(retailer => this.container().append(retailer.render()))
+  } 
   
   static create(formData) {
     return fetch("http://localhost:3000/retailers", {
