@@ -25,13 +25,11 @@ class Retailer {
   }
 
   static filterBy(query) {
-    query = query.toLowerCase()
-    let filterArray = this.collection.filter(retailer => {
-      return retailer.name.toLowerCase() === query
-    })
-    
-    filterArray.forEach(retailer => this.container().append(retailer.render()))
-  } 
+    let retailersArray = this.collection.filter(retailer => retailer.name.toLowerCase() === query || retailer.name.includes(query));
+    let renderFilteredArray = retailersArray.map(retailer => retailer.render());
+    this.container().innerHTML = "";
+    this.container().append(...renderFilteredArray);
+  }  
   
   static create(formData) {
     return fetch("http://localhost:3000/retailers", {
@@ -102,6 +100,7 @@ class Retailer {
 
     this.retailerName ||= document.createElement("a");
     this.retailerName.classList.add(..."py-4 col-span-10 sm:col-span-4 selectRetailer".split(" "));
+    this.retailerName.id = 'retailer-name'
     this.retailerName.dataset.retailerId = this.id
     this.retailerName.textContent = this.name;
     if(!this.delLink) {
@@ -174,4 +173,5 @@ class Pallet {
     this.element.append(this.palletBoxes);
     return this.element;
   }
+
 }
